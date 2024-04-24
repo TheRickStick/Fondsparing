@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Calculator</title>
+</head>
+<body>
+    <h2>Investment Calculator</h2>
+    <label for="initialAmount">Initial Amount:</label>
+    <input type="number" id="initialAmount"><br><br>
+    
+    <label for="monthlyDeposit">Monthly Deposit:</label>
+    <input type="number" id="monthlyDeposit"><br><br>
+    
+    <label for="annualReturnRate">Annual Return Rate (%):</label>
+    <input type="number" id="annualReturnRate"><br><br>
+    
+    <label for="numberOfYears">Number of Years:</label>
+    <input type="number" id="numberOfYears"><br><br>
+    
+    <button onclick="calculateInvestment()">Calculate</button><br><br>
+    
+    <div id="result"></div>
+
+    <script>
+        function calculateInvestment() {
+            var initialAmount = parseFloat(document.getElementById('initialAmount').value);
+            var monthlyDeposit = parseFloat(document.getElementById('monthlyDeposit').value);
+            var annualReturnRate = parseFloat(document.getElementById('annualReturnRate').value) / 100;
+            var numberOfYears = parseFloat(document.getElementById('numberOfYears').value);
+
+            var totalAmount = initialAmount;
+            var months = numberOfYears * 12;
+
+            for (var i = 0; i < months; i++) {
+                totalAmount += monthlyDeposit;
+                totalAmount *= (1 + annualReturnRate / 12);
+            }
+
+            document.getElementById('result').innerHTML = "Totalt beløp etter " + numberOfYears + " år: " + totalAmount.toFixed(2) + " kr";
+        }
+    </script>
+</body>
+</html>
