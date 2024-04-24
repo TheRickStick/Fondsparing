@@ -8,41 +8,62 @@
 <body>
     <h2>Investeringskalkulator</h2>
     <label for="initialAmount">Innledende beløp:</label>
-    <input type="number" id="initialAmount" step="10000" placeholder="100 000"><br><br>
+    <input type="text" id="initialAmount" placeholder="100 000"><br><br>
     
     <label for="monthlyDeposit">Månedlig innskudd:</label>
-    <input type="number" id="monthlyDeposit" step="1000" placeholder="1 000"><br><br>
+    <input type="text" id="monthlyDeposit" placeholder="1 000"><br><br>
     
     <label for="annualReturnRate">Forventet årlig avkastning (%):</label>
-    <input type="number" id="annualReturnRate" step="0.1" placeholder="5"><br><br>
+    <input type="text" id="annualReturnRate" placeholder="5"><br><br>
     
     <label for="numberOfYears">Antall år:</label>
-    <input type="number" id="numberOfYears" step="1" placeholder="10"><br><br>
+    <input type="text" id="numberOfYears" placeholder="10"><br><br>
     
     <button onclick="calculateInvestment()">Beregn</button><br><br>
     
     <div id="result"></div>
 
     <script>
+        document.getElementById('initialAmount').addEventListener('input', formatNumberInput);
+        document.getElementById('monthlyDeposit').addEventListener('input', formatNumberInput);
+        document.getElementById('annualReturnRate').addEventListener('input', formatNumberInput);
+        document.getElementById('numberOfYears').addEventListener('input', formatNumberInput);
+
+        function formatNumberInput(event) {
+            var input = event.target;
+            var value = input.value.replace(/\D/g, '');
+            input.value = formatNumber(value);
+        }
+
+        function formatNumber(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+
         function calculateInvestment() {
-            var initialAmount = parseFloat(document.getElementById('initialAmount').value);
-            var monthlyDeposit = parseFloat(document.getElementById('monthlyDeposit').value);
-            var annualReturnRate = parseFloat(document.getElementById('annualReturnRate').value) / 100;
+            var initialAmount = parseFloat(document.getElementById('initialAmount').value.replace(/\D/g, ''));
+            var monthlyDeposit = parseFloat(document.getElementById('monthlyDeposit').value.replace(/\D/g, ''));
+            var annualReturnRate = parseFloat(document.getElementById('annualReturnRate').value);
             var numberOfYears = parseFloat(document.getElementById('numberOfYears').value);
+
+            if (isNaN(initialAmount) || isNaN(monthlyDeposit) || isNaN(annualReturnRate) || isNaN(numberOfYears)) {
+                var missingFields = [];
+                if (isNaN(initialAmount)) missingFields.push('Innledende beløp');
+                if (isNaN(monthlyDeposit)) missingFields.push('Månedlig innskudd');
+                if (isNaN(annualReturnRate)) missingFields.push('Forventet årlig avkastning');
+                if (isNaN(numberOfYears)) missingFields.push('Antall år');
+                alert('Vennligst fyll ut følgende felt: ' + missingFields.join(', '));
+                return;
+            }
 
             var totalAmount = initialAmount;
             var months = numberOfYears * 12;
 
             for (var i = 0; i < months; i++) {
                 totalAmount += monthlyDeposit;
-                totalAmount *= (1 + annualReturnRate / 12);
+                totalAmount *= (1 + annualReturnRate / 100 / 12);
             }
 
-            document.getElementById('result').innerHTML = "Totalt beløp eter " + numberOfYears + " år: " + formatNumber(totalAmount.toFixed(2)) + " kr";
-        }
-
-        function formatNumber(number) {
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            document.getElementById('result').innerHTML = "Totalt beløp etter " + numberOfYears + " år: " + formatNumber(totalAmount.toFixed(2)) + " kr";
         }
     </script>
 </body>
