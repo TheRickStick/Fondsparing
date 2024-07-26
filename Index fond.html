@@ -16,6 +16,9 @@
     <label for="annualReturnRate">Forventet årlig avkastning (%):</label>
     <input type="text" id="annualReturnRate" inputmode="numeric" placeholder="5"><br><br>
     
+    <label for="annualInflationRate">Forventet årlig inflasjon (%):</label>
+    <input type="text" id="annualInflationRate" inputmode="numeric" placeholder="2"><br><br>
+    
     <label for="numberOfYears">Antall år:</label>
     <input type="text" id="numberOfYears" inputmode="numeric" placeholder="10"><br><br>
     
@@ -27,6 +30,7 @@
         document.getElementById('initialAmount').addEventListener('input', formatNumberInput);
         document.getElementById('monthlyDeposit').addEventListener('input', formatNumberInput);
         document.getElementById('annualReturnRate').addEventListener('input', formatNumberInput);
+        document.getElementById('annualInflationRate').addEventListener('input', formatNumberInput);
         document.getElementById('numberOfYears').addEventListener('input', formatNumberInput);
 
         function formatNumberInput(event) {
@@ -43,13 +47,15 @@
             var initialAmount = parseFloat(document.getElementById('initialAmount').value.replace(/\D/g, ''));
             var monthlyDeposit = parseFloat(document.getElementById('monthlyDeposit').value.replace(/\D/g, ''));
             var annualReturnRate = parseFloat(document.getElementById('annualReturnRate').value);
+            var annualInflationRate = parseFloat(document.getElementById('annualInflationRate').value);
             var numberOfYears = parseFloat(document.getElementById('numberOfYears').value);
 
-            if (isNaN(initialAmount) || isNaN(monthlyDeposit) || isNaN(annualReturnRate) || isNaN(numberOfYears)) {
+            if (isNaN(initialAmount) || isNaN(monthlyDeposit) || isNaN(annualReturnRate) || isNaN(annualInflationRate) || isNaN(numberOfYears)) {
                 var missingFields = [];
                 if (isNaN(initialAmount)) missingFields.push('Innledende beløp');
                 if (isNaN(monthlyDeposit)) missingFields.push('Månedlig innskudd');
                 if (isNaN(annualReturnRate)) missingFields.push('Forventet årlig avkastning');
+                if (isNaN(annualInflationRate)) missingFields.push('Forventet årlig inflasjon');
                 if (isNaN(numberOfYears)) missingFields.push('Antall år');
                 alert('Vennligst fyll ut følgende felt: ' + missingFields.join(', '));
                 return;
@@ -63,7 +69,11 @@
                 totalAmount *= (1 + annualReturnRate / 100 / 12);
             }
 
-            document.getElementById('result').innerHTML = "Totalt beløp etter " + numberOfYears + " år: " + formatNumber(totalAmount.toFixed(2)) + " kr";
+            var adjustedAmount = totalAmount / Math.pow(1 + annualInflationRate / 100, numberOfYears);
+
+            document.getElementById('result').innerHTML = 
+                "Totalt beløp etter " + numberOfYears + " år: " + formatNumber(totalAmount.toFixed(2)) + " kr<br>" +
+                "Justerte beløp etter inflasjon: " + formatNumber(adjustedAmount.toFixed(2)) + " kr";
         }
     </script>
 </body>
